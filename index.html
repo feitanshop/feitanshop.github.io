@@ -10,50 +10,24 @@
       color: white;
     }
 
-    .layout {
-      display: flex;
-    }
-
-    /* SOL PANEL */
-    .sidebar {
-      width: 250px;
+    .topbar {
+      padding: 15px;
       background: #111827;
-      padding: 20px;
-      height: 100vh;
+      display: flex;
+      gap: 10px;
     }
 
-    .sidebar h2 {
-      margin-bottom: 20px;
-    }
-
-    input {
-      width: 100%;
+    select {
       padding: 8px;
-      margin-bottom: 10px;
       border-radius: 5px;
       border: none;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      background: purple;
-      border: none;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    /* SAĞ TARAF */
-    .content {
-      flex: 1;
-      padding: 20px;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
       gap: 20px;
+      padding: 20px;
     }
 
     .card {
@@ -65,73 +39,70 @@
 
     .price {
       color: #22c55e;
-      font-weight: bold;
     }
   </style>
 </head>
 
 <body>
 
-<div class="layout">
+<!-- ÜST SEÇİM -->
+<div class="topbar">
+  <select id="game" onchange="render()">
+    <option value="genshin">Genshin Impact</option>
+    <option value="wuthering">Wuthering Waves</option>
+  </select>
 
-  <!-- SOL PANEL -->
-  <div class="sidebar">
-    <h2>Filtre</h2>
-
-    <input type="number" id="maxPrice" placeholder="Max fiyat">
-    <input type="number" id="minLevel" placeholder="Min level">
-
-    <button onclick="filter()">Filtrele</button>
-  </div>
-
-  <!-- SAĞ -->
-  <div class="content">
-    <h1>🔥 Hesaplar</h1>
-
-    <div class="grid" id="list">
-
-      <div class="card" data-price="20" data-level="50">
-        <h3>Hesap #1</h3>
-        <p>Level: 50</p>
-        <p class="price">20$</p>
-      </div>
-
-      <div class="card" data-price="35" data-level="60">
-        <h3>Hesap #2</h3>
-        <p>Level: 60</p>
-        <p class="price">35$</p>
-      </div>
-
-      <div class="card" data-price="15" data-level="40">
-        <h3>Hesap #3</h3>
-        <p>Level: 40</p>
-        <p class="price">15$</p>
-      </div>
-
-    </div>
-  </div>
-
+  <select id="server" onchange="render()">
+    <option value="all">Tüm Sunucular</option>
+    <option value="eu">Europe</option>
+    <option value="na">America</option>
+    <option value="asia">Asia</option>
+  </select>
 </div>
 
+<!-- LİSTE -->
+<div class="grid" id="list"></div>
+
 <script>
-function filter() {
-  let maxPrice = document.getElementById("maxPrice").value;
-  let minLevel = document.getElementById("minLevel").value;
 
-  let cards = document.querySelectorAll(".card");
+// TÜM DATA BURADA 🔥
+const accounts = [
+  {game:"genshin", server:"eu", level:50, price:20},
+  {game:"genshin", server:"na", level:60, price:35},
+  {game:"genshin", server:"asia", level:45, price:18},
 
-  cards.forEach(card => {
-    let price = card.getAttribute("data-price");
-    let level = card.getAttribute("data-level");
+  {game:"wuthering", server:"eu", level:30, price:15},
+  {game:"wuthering", server:"na", level:40, price:22},
+  {game:"wuthering", server:"asia", level:35, price:19},
+];
 
-    let show = true;
+// RENDER
+function render() {
+  let game = document.getElementById("game").value;
+  let server = document.getElementById("server").value;
 
-    if (maxPrice && price > maxPrice) show = false;
-    if (minLevel && level < minLevel) show = false;
+  let list = document.getElementById("list");
+  list.innerHTML = "";
 
-    card.style.display = show ? "block" : "none";
+  let filtered = accounts.filter(acc => {
+    return acc.game === game && (server === "all" || acc.server === server);
+  });
+
+  filtered.forEach(acc => {
+    list.innerHTML += `
+      <div class="card">
+        <h3>${acc.game.toUpperCase()}</h3>
+        <p>Server: ${acc.server}</p>
+        <p>Level: ${acc.level}</p>
+        <p class="price">${acc.price}$</p>
+      </div>
+    `;
   });
 }
+
+// SAYFA AÇILINCA
+render();
+
 </script>
 
 </body>
