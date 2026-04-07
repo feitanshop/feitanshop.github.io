@@ -17,6 +17,28 @@
       gap: 10px;
     }
 
+    .quick {
+      padding: 15px;
+      background: #020617;
+      display: flex;
+      gap: 10px;
+    }
+
+    input {
+      padding: 8px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      padding: 8px 12px;
+      background: purple;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
     select {
       padding: 8px;
       border-radius: 5px;
@@ -46,6 +68,12 @@
 
 <body>
 
+<!-- 🔥 HIZLI EKLE -->
+<div class="quick">
+  <input id="quickInput" placeholder="örn: genshin eu 50 20">
+  <button onclick="quickAdd()">Ekle</button>
+</div>
+
 <div class="topbar">
   <select id="game" onchange="updateServers(); render();">
     <option value="genshin">Genshin Impact</option>
@@ -62,7 +90,7 @@
 <!-- 🔥 FIREBASE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC2v9hfzTNyEBn3-TCIdGjvbwIV5Xb94tU",
@@ -79,9 +107,37 @@
   window.db = db;
   window.collection = collection;
   window.getDocs = getDocs;
+  window.addDoc = addDoc;
 </script>
 
 <script>
+
+// 🔥 QUICK ADD
+async function quickAdd() {
+
+  let input = document.getElementById("quickInput").value;
+  let parts = input.split(" ");
+
+  if(parts.length < 4){
+    alert("Format: genshin eu 50 20");
+    return;
+  }
+
+  let game = parts[0];
+  let server = parts[1];
+  let level = Number(parts[2]);
+  let price = Number(parts[3]);
+
+  await addDoc(collection(db, "accounts"), {
+    game,
+    server,
+    level,
+    price
+  });
+
+  document.getElementById("quickInput").value = "";
+  render();
+}
 
 // SUNUCULAR
 function updateServers() {
@@ -103,7 +159,7 @@ function updateServers() {
   });
 }
 
-// 🔥 FIREBASE RENDER
+// 🔥 RENDER
 async function render() {
 
   if (!window.db) {
