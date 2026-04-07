@@ -39,42 +39,78 @@
 
     .price {
       color: #22c55e;
+      font-weight: bold;
     }
   </style>
 </head>
 
 <body>
 
-<!-- ÜST SEÇİM -->
 <div class="topbar">
-  <select id="game" onchange="render()">
+
+  <!-- OYUN -->
+  <select id="game" onchange="updateServers(); render();">
     <option value="genshin">Genshin Impact</option>
     <option value="wuthering">Wuthering Waves</option>
+    <option value="honkai">Honkai Star Rail</option>
+    <option value="zenless">Zenless Zone Zero</option>
   </select>
 
-  <select id="server" onchange="render()">
-    <option value="all">Tüm Sunucular</option>
-    <option value="eu">Europe</option>
-    <option value="na">America</option>
-    <option value="asia">Asia</option>
-  </select>
+  <!-- SUNUCU -->
+  <select id="server" onchange="render()"></select>
+
 </div>
 
-<!-- LİSTE -->
 <div class="grid" id="list"></div>
 
 <script>
 
-// TÜM DATA BURADA 🔥
+// TÜM HESAPLAR
 const accounts = [
+
+  // GENSHIN
   {game:"genshin", server:"eu", level:50, price:20},
   {game:"genshin", server:"na", level:60, price:35},
   {game:"genshin", server:"asia", level:45, price:18},
 
+  // HONKAI
+  {game:"honkai", server:"eu", level:45, price:25},
+  {game:"honkai", server:"na", level:50, price:30},
+  {game:"honkai", server:"asia", level:40, price:20},
+
+  // ZENLESS
+  {game:"zenless", server:"eu", level:30, price:18},
+  {game:"zenless", server:"na", level:35, price:22},
+  {game:"zenless", server:"asia", level:28, price:15},
+
+  // WUTHERING (EKSTRA SERVER)
   {game:"wuthering", server:"eu", level:30, price:15},
   {game:"wuthering", server:"na", level:40, price:22},
   {game:"wuthering", server:"asia", level:35, price:19},
+  {game:"wuthering", server:"sea", level:25, price:14},
+  {game:"wuthering", server:"hmt", level:28, price:16},
+
 ];
+
+// SUNUCULARI OYUNA GÖRE DEĞİŞTİR
+function updateServers() {
+  let game = document.getElementById("game").value;
+  let serverSelect = document.getElementById("server");
+
+  serverSelect.innerHTML = '<option value="all">Tüm Sunucular</option>';
+
+  let servers = [];
+
+  if (game === "wuthering") {
+    servers = ["eu","na","asia","sea","hmt"];
+  } else {
+    servers = ["eu","na","asia"];
+  }
+
+  servers.forEach(s => {
+    serverSelect.innerHTML += `<option value="${s}">${s.toUpperCase()}</option>`;
+  });
+}
 
 // RENDER
 function render() {
@@ -88,11 +124,16 @@ function render() {
     return acc.game === game && (server === "all" || acc.server === server);
   });
 
+  if(filtered.length === 0){
+    list.innerHTML = "<p>Hesap bulunamadı</p>";
+    return;
+  }
+
   filtered.forEach(acc => {
     list.innerHTML += `
       <div class="card">
         <h3>${acc.game.toUpperCase()}</h3>
-        <p>Server: ${acc.server}</p>
+        <p>Server: ${acc.server.toUpperCase()}</p>
         <p>Level: ${acc.level}</p>
         <p class="price">${acc.price}$</p>
       </div>
@@ -100,7 +141,8 @@ function render() {
   });
 }
 
-// SAYFA AÇILINCA
+// SAYFA BAŞLANGIÇ
+updateServers();
 render();
 
 </script>
