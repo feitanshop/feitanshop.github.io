@@ -39,6 +39,12 @@
       cursor: pointer;
     }
 
+    .deleteBtn {
+      background: red;
+      float: right;
+      margin-bottom: 10px;
+    }
+
     select {
       padding: 8px;
       border-radius: 5px;
@@ -90,7 +96,7 @@
 <!-- 🔥 FIREBASE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC2v9hfzTNyEBn3-TCIdGjvbwIV5Xb94tU",
@@ -108,13 +114,14 @@
   window.collection = collection;
   window.getDocs = getDocs;
   window.addDoc = addDoc;
+  window.deleteDoc = deleteDoc;
+  window.doc = doc;
 </script>
 
 <script>
 
 // 🔥 QUICK ADD
 async function quickAdd() {
-
   let input = document.getElementById("quickInput").value;
   let parts = input.split(" ");
 
@@ -136,6 +143,20 @@ async function quickAdd() {
   });
 
   document.getElementById("quickInput").value = "";
+  render();
+}
+
+// 🔥 DELETE
+async function deleteAccount(id) {
+
+  let password = prompt("Şifre gir");
+
+  if(password !== "1234"){
+    alert("Yanlış şifre!");
+    return;
+  }
+
+  await deleteDoc(doc(db, "accounts", id));
   render();
 }
 
@@ -177,8 +198,8 @@ async function render() {
 
   let data = [];
 
-  querySnapshot.forEach(doc => {
-    data.push(doc.data());
+  querySnapshot.forEach(d => {
+    data.push({ id: d.id, ...d.data() });
   });
 
   let filtered = data.filter(acc => {
@@ -193,6 +214,7 @@ async function render() {
   filtered.forEach(acc => {
     list.innerHTML += `
       <div class="card">
+        <button class="deleteBtn" onclick="deleteAccount('${acc.id}')">X</button>
         <h3>${acc.game.toUpperCase()}</h3>
         <p>Server: ${acc.server.toUpperCase()}</p>
         <p>Level: ${acc.level}</p>
