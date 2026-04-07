@@ -48,7 +48,6 @@
 
 <div class="topbar">
 
-  <!-- OYUN -->
   <select id="game" onchange="updateServers(); render();">
     <option value="genshin">Genshin Impact</option>
     <option value="wuthering">Wuthering Waves</option>
@@ -56,43 +55,18 @@
     <option value="zenless">Zenless Zone Zero</option>
   </select>
 
-  <!-- SUNUCU -->
   <select id="server" onchange="render()"></select>
 
 </div>
 
 <div class="grid" id="list"></div>
 
+<!-- DATA BURADA YÜKLENİR -->
+<script src="data.js"></script>
+
 <script>
 
-// TÜM HESAPLAR
-const accounts = [
-
-  // GENSHIN
-  {game:"genshin", server:"eu", level:50, price:20},
-  {game:"genshin", server:"na", level:60, price:35},
-  {game:"genshin", server:"asia", level:45, price:18},
-
-  // HONKAI
-  {game:"honkai", server:"eu", level:45, price:25},
-  {game:"honkai", server:"na", level:50, price:30},
-  {game:"honkai", server:"asia", level:40, price:20},
-
-  // ZENLESS
-  {game:"zenless", server:"eu", level:30, price:18},
-  {game:"zenless", server:"na", level:35, price:22},
-  {game:"zenless", server:"asia", level:28, price:15},
-
-  // WUTHERING (EKSTRA SERVER)
-  {game:"wuthering", server:"eu", level:30, price:15},
-  {game:"wuthering", server:"na", level:40, price:22},
-  {game:"wuthering", server:"asia", level:35, price:19},
-  {game:"wuthering", server:"sea", level:25, price:14},
-  {game:"wuthering", server:"hmt", level:28, price:16},
-
-];
-
-// SUNUCULARI OYUNA GÖRE DEĞİŞTİR
+// SUNUCULAR
 function updateServers() {
   let game = document.getElementById("game").value;
   let serverSelect = document.getElementById("server");
@@ -141,7 +115,7 @@ function render() {
   });
 }
 
-// SAYFA BAŞLANGIÇ
+// BAŞLAT
 updateServers();
 render();
 
