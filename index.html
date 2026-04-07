@@ -120,6 +120,13 @@
 
 <script>
 
+// 🔐 GİZLİ ŞİFRE (encode edilmiş)
+const SECRET = "Wjl4IVE3bUBUMnYjTDhwJFI1";
+
+function decode(str) {
+  return atob(str);
+}
+
 // 🔥 QUICK ADD
 async function quickAdd() {
   let input = document.getElementById("quickInput").value;
@@ -146,12 +153,12 @@ async function quickAdd() {
   render();
 }
 
-// 🔥 DELETE
+// 🔥 DELETE (gizli şifre ile)
 async function deleteAccount(id) {
 
   let password = prompt("Şifre gir");
 
-  if(password !== "1234"){
+  if(password !== decode(SECRET)){
     alert("Yanlış şifre!");
     return;
   }
