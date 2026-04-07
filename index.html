@@ -47,7 +47,6 @@
 <body>
 
 <div class="topbar">
-
   <select id="game" onchange="updateServers(); render();">
     <option value="genshin">Genshin Impact</option>
     <option value="wuthering">Wuthering Waves</option>
@@ -56,13 +55,31 @@
   </select>
 
   <select id="server" onchange="render()"></select>
-
 </div>
 
 <div class="grid" id="list"></div>
 
-<!-- DATA BURADA YÜKLENİR -->
-<script src="data.js"></script>
+<!-- 🔥 FIREBASE -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC2v9hfzTNyEBn3-TCIdGjvbwIV5Xb94tU",
+    authDomain: "proje-46934.firebaseapp.com",
+    projectId: "proje-46934",
+    storageBucket: "proje-46934.firebasestorage.app",
+    messagingSenderId: "59395699683",
+    appId: "1:59395699683:web:168e5cc9b0339010d2a6d6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.db = db;
+  window.collection = collection;
+  window.getDocs = getDocs;
+</script>
 
 <script>
 
@@ -86,15 +103,29 @@ function updateServers() {
   });
 }
 
-// RENDER
-function render() {
+// 🔥 FIREBASE RENDER
+async function render() {
+
+  if (!window.db) {
+    setTimeout(render, 500);
+    return;
+  }
+
   let game = document.getElementById("game").value;
   let server = document.getElementById("server").value;
 
   let list = document.getElementById("list");
   list.innerHTML = "";
 
-  let filtered = accounts.filter(acc => {
+  let querySnapshot = await getDocs(collection(db, "accounts"));
+
+  let data = [];
+
+  querySnapshot.forEach(doc => {
+    data.push(doc.data());
+  });
+
+  let filtered = data.filter(acc => {
     return acc.game === game && (server === "all" || acc.server === server);
   });
 
@@ -117,7 +148,7 @@ function render() {
 
 // BAŞLAT
 updateServers();
-setTimeout(render, 1000);
+render();
 
 </script>
 
